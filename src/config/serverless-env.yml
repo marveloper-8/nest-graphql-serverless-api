@@ -1,0 +1,11 @@
+dev:
+  DYNAMODB_TABLE: ${self:service}-items-table-${self:provider.stage}
+  SNS_TOPIC_ARN: ${self:service}-items-topic-${self:provider.stage}
+  SQS_QUEUE_URL: ${self:service}-items-queue-${self:provider.stage}
+  JWT_SECRET: ${env:JWT_SECRET}
+
+prod:
+  DYNAMODB_TABLE: ${self:service}-items-table-${self:provider.stage}
+  SNS_TOPIC_ARN: ${self:service}-items-topic-${self:provider.stage}
+  SQS_QUEUE_URL: ${self:service}-items-queue-${self:provider.stage}
+  JWT_SECRET: ${env:JWT_SECRET}
