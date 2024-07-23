@@ -1,73 +1,191 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NestJS GraphQL Serverless API by Joshua Samuel
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project is a robust, production-ready GraphQL API built with NestJS and designed for serverless deployment. It showcases best practices in modern API development, including GraphQL implementation, authentication, caching, testing, and cloud-native design.
 
-## Description
+## Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **GraphQL API**: Utilizes NestJS's code-first approach with Apollo Server
+- **Authentication**: JWT-based authentication with Guards and Strategies
+- **Database**: PostgreSQL integration using Prisma ORM
+- **Caching**: Redis-based caching for improved performance
+- **Rate Limiting**: Built-in protection against abuse
+- **Logging**: Comprehensive logging with Winston
+- **Testing**: Extensive unit and e2e testing setup
+- **Serverless**: Configured for deployment on AWS Lambda
+- **Health Checks**: Integrated health check endpoints
+- **Configuration Management**: Environment-based configuration using NestJS Config
+- **API Documentation**: Auto-generated Swagger documentation
+- **Code Quality**: ESLint and Prettier integration
 
-## Installation
+## Prerequisites
 
-```bash
-$ npm install
+- Node.js (v14+)
+- npm or yarn
+- PostgreSQL
+- Redis
+
+## Quick Start
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/nestjs-graphql-serverless-api.git
+   cd nestjs-graphql-serverless-api
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Set up environment variables:
+   Copy `.env.example` to `.env` and fill in your specific details.
+
+4. Generate Prisma client:
+   ```
+   npm run prisma:generate
+   ```
+
+5. Run database migrations:
+   ```
+   npm run prisma:migrate
+   ```
+ 
+6. Start the development server:
+   ```
+   npm run start:dev
+   ```
+
+7. Visit `http://localhost:3000/graphql` to access the GraphQL playground.
+
+## Scripts
+
+- `npm run build`: Build the application
+- `npm run format`: Format code using Prettier
+- `npm run start`: Start the application
+- `npm run start:dev`: Start the application in watch mode
+- `npm run start:prod`: Start the production application
+- `npm run lint`: Lint the code
+- `npm test`: Run unit tests
+- `npm run test:e2e`: Run end-to-end tests
+- `npm run deploy`: Deploy to AWS Lambda
+
+## Project Structure
+
+```
+.
+nest-graphql-serverless-api/
+├── src/
+│   ├── main.ts
+│   ├── app.module.ts
+│   ├── config/
+│   │   └── configuration.ts
+│   ├── common/
+│   │   ├── decorators/
+│   │   │   └── user.decorator.ts
+│   │   ├── filters/
+│   │   │   └── http-exception.filter.ts
+│   │   ├── guards/
+│   │   │   └── auth.guard.ts
+│   │   ├── interceptors/
+│   │   │   └── logging.interceptor.ts
+│   │   └── middleware/
+│   │       └── correlation-id.middleware.ts
+│   ├── graphql/
+│   │   ├── schema.gql
+│   │   └── graphql.module.ts
+│   ├── items/
+│   │   ├── entities/
+│   │   │   └── item.entity.ts
+│   │   ├── dto/
+│   │   │   ├── create-item.input.ts
+│   │   │   └── update-item.input.ts
+│   │   ├── commands/
+│   │   │   ├── create-item.command.ts
+│   │   │   ├── update-item.command.ts
+│   │   │   └── delete-item.command.ts
+│   │   ├── events/
+│   │   │   ├── item-created.event.ts
+│   │   │   ├── item-updated.event.ts
+│   │   │   └── item-deleted.event.ts
+│   │   ├── handlers/
+│   │   │   ├── create-item.handler.ts
+│   │   │   ├── update-item.handler.ts
+│   │   │   └── delete-item.handler.ts
+│   │   ├── item.resolver.ts
+│   │   ├── item.service.ts
+│   │   └── item.module.ts
+│   ├── dynamodb/
+│   │   └── dynamodb.service.ts
+│   ├── events/
+│   │   ├── event-bus.service.ts
+│   │   └── event-publisher.service.ts
+│   └── lambda/
+│       └── graphql.handler.ts
+├── test/
+│   ├── unit/
+│   │   └── items/
+│   │       ├── item.resolver.spec.ts
+│   │       └── item.service.spec.ts
+│   └── e2e/
+│       └── items.e2e-spec.ts
+├── serverless.yml
+├── jest.config.js
+├── .env
+├── .env.example
+├── .gitignore
+├── package.json
+└── tsconfig.json
 ```
 
-## Running the app
+## API Documentation
 
-```bash
-# development
-$ npm run start
+Once the application is running, you can access the Swagger documentation at `http://localhost:3000/api`.
 
-# watch mode
-$ npm run start:dev
+## GraphQL Playground
 
-# production mode
-$ npm run start:prod
+When running in development mode, the GraphQL Playground is available at `http://localhost:3000/graphql`.
+
+## Testing
+
+This project includes both unit tests and end-to-end tests.
+
+Run unit tests:
+```
+npm test
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+Run e2e tests:
+```
+npm run test:e2e
 ```
 
-## Support
+## Deployment
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+This project is configured for serverless deployment on AWS Lambda. To deploy:
 
-## Stay in touch
+1. Ensure you have the AWS CLI installed and configured with your credentials.
+2. Run `npm run deploy`
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Acknowledgments
+
+- NestJS team for their excellent framework and documentation
+- The open-source community for their invaluable contributions
+
+## Contact
+
+For any inquiries or issues, please open an issue on this repository or contact [marveloper.8@gmail.com](mailto:marveloper.8@gmail.com).
+
+---
+
+Built with ❤️ using NestJS, GraphQL, and Serverless technologies.
+```
