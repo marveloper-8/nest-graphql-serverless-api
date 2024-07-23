@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { DeleteCommand, DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import { Injectable, Logger } from "@nestjs/common";
+import { DeleteCommand, DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, ScanCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import { ConfigService } from "@nestjs/config";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
@@ -7,45 +7,60 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 export class DynamoDBService {
   private readonly docClient: DynamoDBDocumentClient;
   private readonly tableName: string;
+  private readonly logger = new Logger(DynamoDBService.name);
 
   constructor(private configService: ConfigService) {
     const dbClient = new DynamoDBClient({
-      region: 'localhost',
-      endpoint: 'http://localhost:8000',
-      credentials: {
-        accessKeyId: 'DEFAULT_ACCESS_KEY',
-        secretAccessKey: 'DEFAULT_SECRET',
-      }
-    })
+      region: this.configService.get<string>('AWS_REGION'),
+    });
 
-    this.docClient = DynamoDBDocumentClient.from(dbClient);
-    this.tableName = this.configService.get<string>('dynamodb.tableName');
+    this.docClient = DynamoDBDocumentClient.from(dbClient, {
+      marshallOptions: {
+        removeUndefinedValues: true,
+      },
+    });
+    this.tableName = this.configService.get<string>('DYNAMODB_TABLE');
   }
 
   async create(item: any): Promise<any> {
     const command = new PutCommand({
       TableName: this.tableName,
       Item: item,
-    })
-    await this.docClient.send(command)
-    return item;
+    });
+    try {
+      await this.docClient.send(command);
+      return item;
+    } catch (error) {
+      this.logger.error(`Error creating item: ${error.message}`);
+      throw error;
+    }
   }
 
   async findOne(id: string): Promise<any> {
     const command = new GetCommand({
       TableName: this.tableName,
       Key: { id },
-    })
-    const response = await this.docClient.send(command)
-    return response.Item
+    });
+    try {
+      const response = await this.docClient.send(command);
+      return response.Item;
+    } catch (error) {
+      this.logger.error(`Error finding item: ${error.message}`);
+      throw error;
+    }
   }
 
   async findAll(): Promise<any[]> {
     const command = new ScanCommand({
       TableName: this.tableName,
     });
-    const response = await this.docClient.send(command);
-    return response.Items;
+    try {
+      const response = await this.docClient.send(command);
+      return response.Items;
+    } catch (error) {
+      this.logger.error(`Error scanning items: ${error.message}`);
+      throw error;
+    }
   }
 
   async update(id: string, item: any): Promise<any> {
@@ -59,19 +74,44 @@ export class DynamoDBService {
       },
       ExpressionAttributeValues: {
         ':name': item.name,
-        ':description': item.description
+        ':description': item.description,
       },
       ReturnValues: 'ALL_NEW',
-    })
-    const response = await this.docClient.send(command)
-    return response.Attributes
+    });
+    try {
+      const response = await this.docClient.send(command);
+      return response.Attributes;
+    } catch (error) {
+      this.logger.error(`Error updating item: ${error.message}`);
+      throw error;
+    }
   }
 
   async remove(id: string): Promise<void> {
     const command = new DeleteCommand({
       TableName: this.tableName,
       Key: { id },
-    })
-    await this.docClient.send(command);
+    });
+    try {
+      await this.docClient.send(command);
+    } catch (error) {
+      this.logger.error(`Error deleting item: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async query(keyConditionExpression: string, expressionAttributeValues: Record<string, any>): Promise<any[]> {
+    const command = new QueryCommand({
+      TableName: this.tableName,
+      KeyConditionExpression: keyConditionExpression,
+      ExpressionAttributeValues: expressionAttributeValues,
+    });
+    try {
+      const response = await this.docClient.send(command);
+      return response.Items;
+    } catch (error) {
+      this.logger.error(`Error querying items: ${error.message}`);
+      throw error;
+    }
   }
 }

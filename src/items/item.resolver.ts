@@ -1,41 +1,49 @@
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { ItemService } from "./item.service";
-import { Item } from "./item.entity";
+import { Item } from "./entities/item.entity";
+import { CommandBus } from "@nestjs/cqrs";
+import { DynamoDBService } from "@dynamodb/dynamodb.service";
+import { UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@common/guards/auth.guard";
+import { CreateItemInput } from "./dto/create-item.input";
+import { CreateItemCommand } from "./commands/create-item.command";
+import { UpdateItemInput } from "./dto/update-item.input";
+import { UpdateItemCommand } from "./commands/update-item.command";
+import { DeleteItemCommand } from "./commands/delete-item.command";
 
 @Resolver(() => Item)
 export class ItemResolver {
-  constructor(private readonly itemService: ItemService) {}
+  constructor(
+    private commandBus: CommandBus,
+    private dynamoDBService: DynamoDBService,
+  ) { }
 
   @Query(() => [Item])
+  @UseGuards(AuthGuard)
   async items(): Promise<Item[]> {
-    return this.itemService.findAll();
+    return this.dynamoDBService.findAll();
   }
 
   @Query(() => Item)
+  @UseGuards(AuthGuard)
   async item(@Args('id') id: string): Promise<Item> {
-    return this.itemService.findOne(id)
-  }
-  
-  @Mutation(() => Item)
-  async createItem(
-    @Args('name') name: string,
-    @Args('description', { nullable: true }) description?: string,
-  ): Promise<Item> {
-    return this.itemService.create({ name, description })
+    return this.dynamoDBService.findOne(id);
   }
 
   @Mutation(() => Item)
-  async updateItem(
-    @Args('id') id:string,
-    @Args('name') name: string,
-    @Args('description', { nullable: true }) description?: string,
-  ): Promise<Item> {
-    return this.itemService.update(id, { name, description })
+  @UseGuards(AuthGuard)
+  async createItem(@Args('input') input: CreateItemInput): Promise<Item> {
+    return this.commandBus.execute(new CreateItemCommand(input));
+  }
+
+  @Mutation(() => Item)
+  @UseGuards(AuthGuard)
+  async updateItem(@Args('input') input: UpdateItemInput): Promise<Item> {
+    return this.commandBus.execute(new UpdateItemCommand(input));
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(AuthGuard)
   async deleteItem(@Args('id') id: string): Promise<boolean> {
-    await this.itemService.remove(id);
-    return true
+    return this.commandBus.execute(new DeleteItemCommand(id));
   }
 }

@@ -14,6 +14,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     ctx.res.status(status).json({
       statusCode: status,
       message: response['message'] || exception.message,
-    })
+    });
   }
 }

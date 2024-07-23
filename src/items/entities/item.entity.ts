@@ -6,8 +6,14 @@ export class Item {
   id: string;
 
   @Field()
-  name?: string;
+  name: string;
 
   @Field({ nullable: true })
   description?: string;
+
+  @Field()
+  createdAt: Date;
+
+  @Field()
+  updatedAt: Date;
 }

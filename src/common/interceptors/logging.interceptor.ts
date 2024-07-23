@@ -15,8 +15,8 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const duration = Date.now() - start;
-        this.logger.log(`${fieldName} - ${duration}ms`)
-      })
-    )
+        this.logger.log(`${fieldName} - ${duration}ms`);
+      }),
+    );
   }
 }

@@ -15,9 +15,9 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.use(CorrelationIdMiddleware);
 
-  const port = configService.get<number>('PORT', 3000)
-  await app.listen(port)
-  logger.log(`Application is running on: http://localhost:${port}`)
+  const port = configService.get<number>('PORT', 3000);
+  await app.listen(port);
+  logger.log(`Application is running on: http://localhost:${port}`);
 }
 
 bootstrap();

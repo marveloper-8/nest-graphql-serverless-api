@@ -1,11 +1,11 @@
 import { DynamoDBService } from "@dynamodb/dynamodb.service";
 import { Injectable } from "@nestjs/common";
 import { v4 as uuidv4 } from 'uuid'
-import { Item } from "./item.entity";
+import { Item } from "./entities/item.entity";
 
 @Injectable()
 export class ItemService {
-  constructor(private readonly dynamoDBService: DynamoDBService) {}
+  constructor(private readonly dynamoDBService: DynamoDBService) { }
 
   async create(data: Partial<Item>): Promise<Item> {
     const item: Item = {

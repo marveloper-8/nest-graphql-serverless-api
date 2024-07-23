@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '@config/configuration';
 import { CqrsModule } from '@nestjs/cqrs'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ItemModule } from '@items/item.module';
+import { DynamoDBService } from '@dynamodb/dynamodb.service';
+import { EventBusService } from '@events/event-bus.service';
+import { EventPublisherService } from '@events/event-publisher.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration]
+      load: [configuration],
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -25,9 +26,8 @@ import { ItemModule } from '@items/item.module';
       inject: [ConfigService],
     }),
     CqrsModule,
-    ItemModule
+    ItemModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [DynamoDBService, EventBusService, EventPublisherService],
 })
 export class AppModule {}
