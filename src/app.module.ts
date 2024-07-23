@@ -6,6 +6,7 @@ import configuration from '@config/configuration';
 import { CqrsModule } from '@nestjs/cqrs'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ItemModule } from '@items/item.module';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { GraphQLModule } from '@nestjs/graphql';
       inject: [ConfigService],
     }),
     CqrsModule,
-    
+    ItemModule
   ],
   controllers: [AppController],
   providers: [AppService],
